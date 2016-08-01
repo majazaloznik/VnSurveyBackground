@@ -1,0 +1,247 @@
+\documentclass{article}
+\renewcommand{\baselinestretch}{1.1} 
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnam,english]{babel}
+ \usepackage[usenames,dvipsnames]{pstricks}
+\usepackage{pst-node}
+\usepackage{pstricks-add}
+\usepackage[dvips]{graphicx}
+\usepackage{psfrag}
+\usepackage[]{url}
+\usepackage{multirow}
+\usepackage{tabularx}
+\begin{document}
+\title{Vietnam Survey - Sampling Stratification Background Data}
+\author{mz}
+\maketitle
+\normalsize
+
+
+\section{Vientam 2009 Census - IPUMS}
+
+Based on the IPUMS-International micro-data from the 2009 census. This is a 15 \% sample from the complete 2009 census data --- 3,692,042 households or 14,775,590 individuals. 
+
+\bigskip
+
+\noindent The distribution is calculated using the person weights (variable \texttt{WTPER}) of people in agricultural occupations (see Section \ref{Sec:agr}), which is compared to the distribution of the over 15 population as a whole. 
+
+
+
+\bigskip
+
+\noindent The age and gender distribution is calculated separately for
+\begin{enumerate}
+\item all persons over the age of 15 --Fig \ref{Fig:01}
+\item all heads of households -- Fig \ref{Fig:02}
+\end{enumerate}
+
+No regional decomposition was attempted due to occupational status presumably not being very useful for the older ages (see bellow). 
+
+\subsection{Agricultural occupational status}\label{Sec:agr}
+
+Occupational status is determined from the answer to the following question:
+%\footnote{codes available at \url{https://international.ipums.org/international-action/variables/VN2009A_0416#codes_section}}:
+
+\begin{quote}
+\emph{During the last 7 days, what was the main type of work you did and what position did you hold for the mentioned work (if available)?}
+\end{quote}
+
+\noindent The big caveat here is therefore that these occupational categories only refer to the main occupation as described in the question above and very likely exclude large numbers of people who are engaged in rice farming, but not as their main occupation, or did not engage in it in the previous 7 days and/or (presumably) are retired!
+
+\noindent Agricultural occupational status was selected for from by the \texttt{OCC} variable by including the following codes: 
+
+\begin{itemize}
+\item 920	Agricultural, forestry, fishery labourers	3,274,060
+\item 600	Skilled agricultural, forestry and fishery workers	3
+\item 610	Commercial skilled agricultural workers, unspecified	34
+\item 611	Commercial gardeners and crop growers	767,287
+\item 612	Commercial animal producers	155,144
+\item 613	Commercial crop and animal producers	2,687
+\item 630	Subsistence agricultural, fishery, hunting and gathering workers, unspecified	35
+\item 631	Subsistence agricultural workers	480,768
+\item 632	Subsistence animal producers	22,272
+\item 633	Subsistence crop and animal producers	897
+
+\end{itemize}
+
+\subsection{All persons over 15 --- in agricultural occupations}\label{Sec:All}
+
+\begin{figure}[htbp!]
+\includegraphics[width=\textwidth]{figures/AgriDistAll.eps}
+\caption{The age and gender distribution all persons over 15 in agricultural occupations. \textcolor{red}{Red} indicates the respecive population distributions for all persons over 15, irrespective of occupation. The chart represents 24,949,636 people in agriculture compared to 64,332,914 people over 15. }\label{Fig:01}
+\end{figure}
+
+%Figure \ref{Fig:01} (and corresponding data in Table \ref{Tab:01}) show the age and gender distributions of all people over 15 (regardless of household position), who's \emph{main work }is in agriculture. The chart represents 24,949,636 people in agriculture compared to 64,332,914 people over 15 \footnote{The unweighted sample sizes are 4,703,187   and 10,431,501 respectively.}.
+%
+%\begin{itemize}
+%\item Compared to the population distribution as a whole, agricultural workers tend to be over-represented in the middle ages: 35--64. 
+%\item About 14.2 \% of agricultural workers are over 55. 
+%\item This compares to 16.7 \% overall. 
+%\end{itemize}
+
+
+
+
+
+\begin{figure}[htbp!]
+\subsection{All heads of household --- in agricultural occupations}\label{Sec:HH} 
+
+\includegraphics[width=\textwidth]{figures/AgriDistHeads.eps}
+\caption{The age and gender distribution all \emph{heads of households} in agricultural occupations. \textcolor{red}{Red} indicates the respecive population distributions for heads of households, irrespective of occupation. The chart represents 9,434,305 heads of households in agriculture compared to 23,062,456 heads of households over 15.}\label{Fig:02}
+\end{figure}
+
+
+\begin{table}[htbp!]
+\caption{Data for Figures \ref{Fig:01} and \ref{Fig:02} - own calculations from IMPUMSI-VN-2009}\label{Tab:01}
+\centering
+\begin{tabular}{rrrrrrrrr}
+  \multicolumn{9}{c}{\emph{1.1 Age structure of whole population ($\Sigma = 100 \%$) -- Fig \ref{Fig:01}}}\\
+  \hline
+\emph{Males} & 13.08 & 11.17 & 9.76 & 7.48 & 3.59 & 1.99 & 1.22 & 0.30 \\ 
+\emph{Females} & 12.79 & 11.22 & 9.74 & 8.11 & 4.24 & 2.75 & 1.86 & 0.70 \\ 
+  \hline
+  \\
+  \multicolumn{9}{c}{\emph{1.2 Age structure of farmers ($\Sigma = 100 \%$) -- Fig \ref{Fig:01}}}\\
+\hline
+ & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85+ \\ 
+  \hline
+\emph{Males} & 11.16 & 11.03 & 11.05 & 8.87 & 4.30 & 1.81 & 0.59 & 0.05 \\ 
+ \emph{Females} & 9.61 & 11.52 & 12.07 & 10.48 & 4.83 & 2.02 & 0.56 & 0.05 \\
+ \hline
+ \\ 
+ \multicolumn{9}{c}{\emph{1.3 Age structure of heads of households ($\Sigma = 100 \%$) -- Fig \ref{Fig:02}}}\\
+     \hline
+ & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85+ \\ 
+  \hline
+  \emph{Males}  & 2.91 & 15.20 & 20.95 & 17.62 & 8.63 & 4.66 & 2.69 & 0.54 \\ 
+\emph{Females} & 2.04 & 3.66 & 4.79 & 6.00 & 4.24 & 3.25 & 2.17 & 0.65 \\ 
+\hline
+\\
+\multicolumn{9}{c}{\emph{1.4 Age structure of farmers heads of households ($\Sigma = 100 \%$) -- Fig \ref{Fig:02}}}\\
+     \hline
+ & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85+ \\ 
+\emph{Males} & 2.34 & 16.85 & 25.02 & 21.68 & 10.63 & 4.34 & 1.40 & 0.10 \\ 
+ \emph{Females} & 0.36 & 1.90 & 3.72 & 5.43 & 3.67 & 1.91 & 0.58 & 0.06 \\ 
+
+   \hline
+\end{tabular}
+\end{table}
+
+
+\section{Vietnam Household Living Standards Survey - 2010}
+
+   The Vietnam Household Living Standards Survey is a biannual longitudinal survey
+conducted by the Vietnamese Government Statistical Office, and is meant to be nationally representative (but this has been disputed\footnote{e.g. \url{http://www.ou.edu.vn/ncktxh/Documents/Seminars/VHLSS\%20Impacts.pdf}}). The 2010 sample has 36,988 persons in 9.395 households\footnote{NB: because of missing and duplicated weights 6 hh = 24 people have had to be dropped...}. Only household weights are available for the sample, and have been used here. 
+
+
+\subsection{Employment or Self-employment in agriculture, forestry, aquaculture}\label{Sec:Vagr}
+
+The population distribution is selected from people either in primary or secondary employment or self-employed in agriculture related activities. 
+
+\subsubsection{Employment}
+
+\emph{Employment} in agriculture, forestry, aquaculture is determined by the occupational code noted in conjunction with answers to the following two questions asked of every household member over the age of five::
+
+\begin{quote}
+\emph{\texttt{4A1.3c} Which job has been the most time-consuming over the last 12 months?}
+
+\emph{\texttt{4A1.4c} What is the second most time-consuming job (after the main one) taken by [name] over the past 12 months?}
+\end{quote}
+
+\noindent Agricultural occupational status was selected by including the following codes:
+
+\begin{itemize}
+\item 61	Labourers with market-demanded skills in agriculture
+\item 62	Labourers with market-demanded skills in forestry, fisheries and hunting
+\item 63	Labourers in agriculture, fisheries, hunting and collection of farm produce for self-subsidy
+\item 92	Low-skilled labourers in agriculture, forestry and fisheries
+
+\end{itemize}
+
+\subsubsection{Self-employment}
+
+\emph{\emph{Self-employment} in agriculture, forestry, aquaculture }is determined from the answer to the following question asked of every household member over the age of five:
+
+\begin{quote}
+\emph{\texttt{4A1.1b} Over the past 12 months, have you been involved in production or services regarding production, husbandry, forestry and aquaculture for the household?}
+\end{quote}
+
+\subsection{All persons over 5 --- in agricultural occupations}\label{Sec:VAll}
+
+
+\begin{figure}[htbp!]
+
+\includegraphics[width=\textwidth]{figures/VHLSSAgriDistAll.eps}
+\caption{The age and gender distribution of everyone over 5 in agricultural occupations or self-employment. \textcolor{red}{Red} indicates the respecive population distributions everyone, irrespective of occupation. The chart represents 31,588,851 people in agriculture (sums to 100 \%) compared to 78,305,295 people overall (also sum up to 100 \%) -- the structure of the latter looks like the weighting leads to overrepresentation of the 35-- age groups, so clearly the VHLS saple is not representative even at this resolution...}\label{Fig:03}
+\end{figure}
+
+Figure \ref{Fig:03} actually shows a pattern not too dissimilar to Figure \ref{Fig:01}: relative to the age structure of the population, agricultural occupations are over-represented in age groups from 25-64, and quite proportional at ages 65-74. 
+
+Seems like the survey including primary and secondary and self-employment in agrliculture - as opposed to only a single occupation as the census data did - does paint a dramatically different picture at older ages. 
+ 
+\begin{figure}[htbp!]
+
+\includegraphics[width=\textwidth]{figures/VHLSSAgriDistAllRelative.eps}
+\caption{Same as Figure \ref{Fig:03}, only this time the people in agriculture (approx 40 \%) are shown  relative to the total population (100 \%)).}\label{Fig:04}
+\end{figure}
+
+
+\begin{table}[htbp!]
+\caption{Data for Figures \ref{Fig:03} and \ref{Fig:04} - own calculations from VHLSS 2010}\label{Tab:01}
+\centering
+\begin{tabular}{rr rrrrrrrrr}
+\\
+\multicolumn{11}{c}{\emph{2.1 Age structure of whole population ($\Sigma = 100 \%$)}}\\
+\hline
+& 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
+  \hline
+\emph{M} & 8.12 & 10.46 & 8.18 & 7.85 & 6.90 & 3.97 & 1.77 & 1.06 & 0.26 & 0.01 \\ 
+\emph{W} & 7.62 & 10.29 & 8.52 & 8.05 & 7.78 & 4.36 & 2.50 & 1.68 & 0.59 & 0.04 \\ 
+\\
+\multicolumn{11}{c}{\emph{2.2 Age structure of farmers ($\Sigma = 100 \%$)}}\\
+\hline
+& 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
+  \hline
+\emph{M} & 1.62 & 9.09 & 9.57 & 11.03 & 9.81 & 5.36 & 2.04 & 0.63 & 0.07 & 0.00 \\ 
+\emph{W} & 1.25 & 7.63 & 10.37 & 11.32 & 11.64 & 5.66 & 2.22 & 0.63 & 0.06 & 0.00 \\ 
+\hline
+\\
+\multicolumn{11}{c}{\emph{2.3 Farmers as proportion of whole population ($\Sigma = 40.34 \%$)}}\\
+\hline
+& 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
+\hline
+\emph{M} & 0.65 & 3.67 & 3.86 & 4.45 & 3.96 & 2.16 & 0.82 & 0.26 & 0.03 & 0.00 \\ 
+\emph{W}& 0.51 & 3.08 & 4.18 & 4.57 & 4.70 & 2.28 & 0.90 & 0.25 & 0.02 & 0.00 \\ 
+\hline
+\\
+\multicolumn{11}{c}{\emph{2.4 Farmers as proportion of each age-group population}}\\
+\hline
+& 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
+\hline
+\emph{M} & 8.05 & 35.05 & 47.20 & 56.68 & 57.38 & 54.46 & 46.57 & 24.04 & 10.28 & 0.00 \\ 
+\emph{W} & 6.64 & 29.91 & 49.13 & 56.77 & 60.35 & 52.39 & 35.74 & 15.21 & 4.15 & 0.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+Figure \ref{Fig:04} is essentially  the same data as Figure \ref{Fig:03}, only the agricultural workers' pyramid is now scaled correctly relative to the whole population (red), so it is clear that around 40 \% of the population is involved in agriculture, a proportion which ranges from single digits for under 14s and women over 85, to highs of 60 \% for the age group 45--64 (see Table 3.4 for these numbers).  
+
+\subsection{Regional variation of proportion farmers}\label{Sec:VAll}
+
+The VHLLS is meant to be representative at the provincial level - however the sample sizes are so small, that the previous age-grouping are not useful. Instead I've grouped the data into three big age groups: 5--24, 25--54, and 55+, which is perhaps more reasonable to investigate the regional variation of people in agriculture relative to the rest. Still, these numbers are still extremely low, so I wouldn't put too much weight on them.. 
+
+Figure \label{Fig:05} is just a quick overview of the data: Each bar represents all the farmers in one province and their gender and age structure. Lighter colours are younger and darker older, the provinces are sorted by proportion of farmers who are women over 55. The highest level is in Thái Bình province (code 34) where 20 \% of the people in agricultural occupations are women over 55 (and 22 \% are men over 55) -- but this is based on a sample of 282 farmers (the total sample for the province is 516). 
+
+The average proportion of farmers who are older women across all provinces is 8.2 \% and for men it is slightly less at 7.9
+
+ 
+\begin{figure}[htbp!]
+\psfrag{a}[r][Br]{\scriptsize{over 55}}
+\psfrag{b}[r][Br]{\scriptsize{25-54}}
+\psfrag{c}[r][Br]{\scriptsize{under 25}}
+
+\includegraphics[width=\textwidth]{figures/VHLSSRegions.eps}
+\caption{Proportion of farmers in each age group by province. Gray segments are men, pink are women. Each bar represents one province (sorry the codes aren't there). }\label{Fig:05}
+\end{figure}
+\end{document}
