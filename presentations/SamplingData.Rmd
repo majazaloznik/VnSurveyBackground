@@ -13,7 +13,7 @@ require(knitr)
 ```
 
 ```{r fonts, message=FALSE, include = FALSE}
-library(extrafont)
+ library(extrafont)
 ```
 
 ```{r dataimport, include = FALSE, eval = FALSE}
@@ -172,7 +172,7 @@ Agricultural occupational status was selected for from by the `OCC` variable by 
 
 ## All persons over 15 --- in agricultural occupations{#Sec:All}
 
-```{r fig_agric_occupation, include = TRUE, echo = FALSE, results="hide", fig.width=8, figh.height=6, fig.cap="Figure 1: The age and gender distribution all persons over 15 in agricultural occupations. Red indicates the respecive population distributions for all persons over 15, irrespective of occupation. The chart represents 24,949,636 people in agriculture compared to 64,332,914 people over 15."}
+```{r fig_agric_occupation, include = TRUE, echo = FALSE, results="hide", warning = FALSE, fig.width=8, figh.height=6, fig.cap="Figure 1: The age and gender distribution all persons over 15 in agricultural occupations. Red indicates the respecive population distributions for all persons over 15, irrespective of occupation. The chart represents 24,949,636 people in agriculture compared to 64,332,914 people over 15."}
 SUM.all.agri.pop <- read.csv("../data/Sum.all.agri.pop.csv")
 SUM.all.pop <- read.csv("../data/Sum.all.pop.csv")
 
