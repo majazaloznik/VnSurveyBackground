@@ -9,15 +9,11 @@ library(dplyr)
 library(ENmisc)
 library(Hmisc)
 library(tidyr)
-library(tikzDevice)
 require(knitr)
-knitr::opts_chunk$set( fig.width=7, fig.height=7)
 ```
 
 ```{r fonts, message=FALSE, include = FALSE}
 library(extrafont)
-#loadfonts(device="postscript")
-
 ```
 
 ```{r dataimport, include = FALSE, eval = FALSE}
@@ -325,123 +321,366 @@ kable( xx[3:4,], digits = 2, caption = "Table 3: Age structure of heads of hosue
 kable( xx[1:2,], digits = 2, caption = "Table 4: Age structure of farmers heads of hosueholds (over 15) -- see Figure 2.") 
 ```
 
-<!--    
+# Vietnam Household Living Standards Survey - 2010
+
+The Vietnam Household Living Standards Survey is a biannual longitudinal survey
+    conducted by the Vietnamese Government Statistical Office, and is meant to be nationally representative (but this has been disputed [^2]). The 2010 sample has 36,988 persons in 9.395 households[^3]. Only household weights are available for the sample, and have been used here. 
+    
+[^2]: e.g. [http://www.ou.edu.vn/ncktxh/Documents/Seminars/VHLSS\%20Impacts.pdf]
+[^3]: NB: because of missing and duplicated weights 6 hh = 24 people have had to be dropped...
+    
+## Employment or Self-employment in agriculture, forestry, aquaculture{#Sec:Vagr}
+    
+The population distribution is selected from people either in primary or secondary employment or self-employed in agriculture related activities. 
+    
+### Employment
+    
+*Employment* in agriculture, forestry, aquaculture is determined by the occupational code noted in conjunction with answers to the following two questions asked of every household member over the age of five::
+    
+> `4A1.3c` *Which job has been the most time-consuming over the last 12 months?*
+
+> `4A1.4c` *What is the second most time-consuming job (after the main one) taken by [name] over the past 12 months?*
+    
+Agricultural occupational status was selected by including the following codes:
+    
+* 61	Labourers with market-demanded skills in agriculture
+* 62	Labourers with market-demanded skills in forestry, fisheries and hunting
+* 63	Labourers in agriculture, fisheries, hunting and collection of farm produce for self-subsidy
+* 92	Low-skilled labourers in agriculture, forestry and fisheries
+
+
+### Self-employment
+    
+*Self-employment* in agriculture, forestry, aquaculture }is determined from the answer to the following question asked of every household member over the age of five:
+
+> `4A1.1b` *Over the past 12 months, have you been involved in production or services regarding production, husbandry, forestry and aquaculture for the household?*
   
-    
-    \section{Vietnam Household Living Standards Survey - 2010}
-    
-    The Vietnam Household Living Standards Survey is a biannual longitudinal survey
-    conducted by the Vietnamese Government Statistical Office, and is meant to be nationally representative (but this has been disputed\footnote{e.g. \url{http://www.ou.edu.vn/ncktxh/Documents/Seminars/VHLSS\%20Impacts.pdf}}). The 2010 sample has 36,988 persons in 9.395 households\footnote{NB: because of missing and duplicated weights 6 hh = 24 people have had to be dropped...}. Only household weights are available for the sample, and have been used here. 
-    
-    
-    \subsection{Employment or Self-employment in agriculture, forestry, aquaculture}\label{Sec:Vagr}
-    
-    The population distribution is selected from people either in primary or secondary employment or self-employed in agriculture related activities. 
-    
-    \subsubsection{Employment}
-    
-    \emph{Employment} in agriculture, forestry, aquaculture is determined by the occupational code noted in conjunction with answers to the following two questions asked of every household member over the age of five::
-    
-    \begin{quote}
-    \emph{\texttt{4A1.3c} Which job has been the most time-consuming over the last 12 months?}
-    
-    \emph{\texttt{4A1.4c} What is the second most time-consuming job (after the main one) taken by [name] over the past 12 months?}
-    \end{quote}
-    
-    \noindent Agricultural occupational status was selected by including the following codes:
-    
-    \begin{itemize}
-    \item 61	Labourers with market-demanded skills in agriculture
-    \item 62	Labourers with market-demanded skills in forestry, fisheries and hunting
-    \item 63	Labourers in agriculture, fisheries, hunting and collection of farm produce for self-subsidy
-    \item 92	Low-skilled labourers in agriculture, forestry and fisheries
-    
-    \end{itemize}
-    
-    \subsubsection{Self-employment}
-    
-    \emph{\emph{Self-employment} in agriculture, forestry, aquaculture }is determined from the answer to the following question asked of every household member over the age of five:
-    
-    \begin{quote}
-    \emph{\texttt{4A1.1b} Over the past 12 months, have you been involved in production or services regarding production, husbandry, forestry and aquaculture for the household?}
-    \end{quote}
-    
-    \subsection{All persons over 5 --- in agricultural occupations}\label{Sec:VAll}
-    
-    
-    \begin{figure}[htbp!]
-    
-    \includegraphics[width=\textwidth]{figures/VHLSSAgriDistAll.eps}
-    \caption{The age and gender distribution of everyone over 5 in agricultural occupations or self-employment. \textcolor{red}{Red} indicates the respecive population distributions everyone, irrespective of occupation. The chart represents 31,588,851 people in agriculture (sums to 100 \%) compared to 78,305,295 people overall (also sum up to 100 \%) -- the structure of the latter looks like the weighting leads to overrepresentation of the 35-- age groups, so clearly the VHLS saple is not representative even at this resolution...}\label{Fig:03}
-    \end{figure}
-    
-    Figure \ref{Fig:03} actually shows a pattern not too dissimilar to Figure \ref{Fig:01}: relative to the age structure of the population, agricultural occupations are over-represented in age groups from 25-64, and quite proportional at ages 65-74. 
-    
-    Seems like the survey including primary and secondary and self-employment in agrliculture - as opposed to only a single occupation as the census data did - does paint a dramatically different picture at older ages. 
-    
-    \begin{figure}[htbp!]
-    
-    \includegraphics[width=\textwidth]{figures/VHLSSAgriDistAllRelative.eps}
-    \caption{Same as Figure \ref{Fig:03}, only this time the people in agriculture (approx 40 \%) are shown  relative to the total population (100 \%)).}\label{Fig:04}
-    \end{figure}
-    
-    
-    \begin{table}[htbp!]
-    \caption{Data for Figures \ref{Fig:03} and \ref{Fig:04} - own calculations from VHLSS 2010}\label{Tab:01}
-    \centering
-    \begin{tabular}{rr rrrrrrrrr}
-    \\
-    \multicolumn{11}{c}{\emph{2.1 Age structure of whole population ($\Sigma = 100 \%$)}}\\
-    \hline
-    & 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
-    \hline
-    \emph{M} & 8.12 & 10.46 & 8.18 & 7.85 & 6.90 & 3.97 & 1.77 & 1.06 & 0.26 & 0.01 \\ 
-    \emph{W} & 7.62 & 10.29 & 8.52 & 8.05 & 7.78 & 4.36 & 2.50 & 1.68 & 0.59 & 0.04 \\ 
-    \\
-    \multicolumn{11}{c}{\emph{2.2 Age structure of farmers ($\Sigma = 100 \%$)}}\\
-    \hline
-    & 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
-    \hline
-    \emph{M} & 1.62 & 9.09 & 9.57 & 11.03 & 9.81 & 5.36 & 2.04 & 0.63 & 0.07 & 0.00 \\ 
-    \emph{W} & 1.25 & 7.63 & 10.37 & 11.32 & 11.64 & 5.66 & 2.22 & 0.63 & 0.06 & 0.00 \\ 
-    \hline
-    \\
-    \multicolumn{11}{c}{\emph{2.3 Farmers as proportion of whole population ($\Sigma = 40.34 \%$)}}\\
-    \hline
-    & 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
-    \hline
-    \emph{M} & 0.65 & 3.67 & 3.86 & 4.45 & 3.96 & 2.16 & 0.82 & 0.26 & 0.03 & 0.00 \\ 
-    \emph{W}& 0.51 & 3.08 & 4.18 & 4.57 & 4.70 & 2.28 & 0.90 & 0.25 & 0.02 & 0.00 \\ 
-    \hline
-    \\
-    \multicolumn{11}{c}{\emph{2.4 Farmers as proportion of each age-group population}}\\
-    \hline
-    & 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
-    \hline
-    \emph{M} & 8.05 & 35.05 & 47.20 & 56.68 & 57.38 & 54.46 & 46.57 & 24.04 & 10.28 & 0.00 \\ 
-    \emph{W} & 6.64 & 29.91 & 49.13 & 56.77 & 60.35 & 52.39 & 35.74 & 15.21 & 4.15 & 0.00 \\ 
-    \hline
-    \end{tabular}
-    \end{table}
-    
-    Figure \ref{Fig:04} is essentially  the same data as Figure \ref{Fig:03}, only the agricultural workers' pyramid is now scaled correctly relative to the whole population (red), so it is clear that around 40 \% of the population is involved in agriculture, a proportion which ranges from single digits for under 14s and women over 85, to highs of 60 \% for the age group 45--64 (see Table 3.4 for these numbers).  
-    
-    \subsection{Regional variation of proportion farmers}\label{Sec:VAll}
-    
-    The VHLLS is meant to be representative at the provincial level - however the sample sizes are so small, that the previous age-grouping are not useful. Instead I've grouped the data into three big age groups: 5--24, 25--54, and 55+, which is perhaps more reasonable to investigate the regional variation of people in agriculture relative to the rest. Still, these numbers are still extremely low, so I wouldn't put too much weight on them.. 
-    
-    Figure \label{Fig:05} is just a quick overview of the data: Each bar represents all the farmers in one province and their gender and age structure. Lighter colours are younger and darker older, the provinces are sorted by proportion of farmers who are women over 55. The highest level is in Thái Bình province (code 34) where 20 \% of the people in agricultural occupations are women over 55 (and 22 \% are men over 55) -- but this is based on a sample of 282 farmers (the total sample for the province is 516). 
+## All persons over 5 --- in agricultural occupations {#Sec:VAll}
 
-The average proportion of farmers who are older women across all provinces is 8.2 \% and for men it is slightly less at 7.9
+```{r import_vhlss, include = FALSE, eval = FALSE}
+#################################
+## Vietnam Household Living Standards Survey
+################################
+#######################################
+library(foreign)
+library(dplyr)
+require(tidyr)
+
+## household memebrs
+muc1a.2010 <- read.dta("data/muc1a.dta", 
+                       convert.factors=FALSE)
+# working in agriculture 
+muc4a1 <- read.dta("data/muc4a1.dta", 
+                    convert.factors=FALSE)
+
+## merge both
+vhlss.2010 <- inner_join( muc1a.2010, muc4a1)
+province.names <- read.csv("data/tinh.csv", header=FALSE)
+
+## wieghts
+wt10 <- read.dta("data/wt10.dta",
+                 convert.factors=FALSE)
+wt10 <- unique(wt10)
+## two househodls weights are duplicated in the weights.. so it looks like tehre are 9402 hh weights,
+## but there aren't really.. this removes 2 hh = 6 people from data set
 
 
-\begin{figure}[htbp!]
-\psfrag{a}[r][Br]{\scriptsize{over 55}}
-\psfrag{b}[r][Br]{\scriptsize{25-54}}
-\psfrag{c}[r][Br]{\scriptsize{under 25}}
+## then there are 5 households in teh data set that don't have weights as well, 
+## see them here: 
+#  wt10[is.na(wt10$wt9),]
+wt10 <- wt10[!is.na(wt10$wt9),]
+## so we have to remove those 18 people as well. 
 
-\includegraphics[width=\textwidth]{figures/VHLSSRegions.eps}
-\caption{Proportion of farmers in each age group by province. Gray segments are men, pink are women. Each bar represents one province (sorry the codes aren't there). }\label{Fig:05}
-                                                                                                                                       \end{figure}
-                                                                                                                                       \end{document}
-                                                                                                                                       regular html comment --> 
+## so an inner join is  how we get rid of the people without weights - but we've lost 7 hh or 24 people
+vhlss.2010 <- inner_join(vhlss.2010, wt10)
+
+## no of households
+vhlss.2010 %>%
+group_by(tinh, huyen, xa, diaban, hoso) %>%
+  summarise(n=n()) %>% nrow()
+
+## who is asked the agriculture question? over fives:   
+max(vhlss.2010[is.na(vhlss.2010$m4ac1a),]$m1ac5)
+
+## age groups: age is m1ac5 (and big age groups)
+vhlss.2010 <- vhlss.2010 %>%
+  filter(!is.na(m4ac1b)) %>%
+  mutate(age.group = cut(m1ac5, breaks=c(seq(5,105,10)), right=FALSE, include.lowest=TRUE)) %>%
+  mutate(big.age.group = cut(m1ac5, breaks=c(5,25,55, 105), right=FALSE, include.lowest=TRUE)) 
+
+
+## Agri people
+
+vhlss.2010.agri <- 
+  vhlss.2010 %>%
+  filter(m4ac1b==1 | m4ac3 %in% c(61, 62, 63, 92) | m4ac4 %in% c(61, 62, 63, 92))
+
+SUM.vhlss.2010.agri <- 
+  vhlss.2010.agri %>%
+  dplyr::group_by(m1ac2, age.group) %>%
+  dplyr::summarise(n=sum(wt9), n.uW=n())  %>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(freq=n/sum(n), freq.uW = n.uW/sum(n.uW))
+
+## All people (over 5)
+
+SUM.vhlss.2010.all <- 
+  vhlss.2010 %>%
+  dplyr::group_by(m1ac2, age.group) %>%
+  dplyr::summarise(n=sum(wt9), n.uW=n())  %>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(freq=n/sum(n), freq.uW = n.uW/sum(n.uW))
+
+############ same but REGIONS as well 
+## Agri people
+
+SUM.vhlss.2010.agri.REG <- 
+  vhlss.2010.agri %>%
+  dplyr::group_by(tinh, m1ac2, big.age.group) %>%
+  dplyr::summarise(n=sum(wt9), n.uW=n())  %>%
+  dplyr::mutate(freq=n/sum(n), freq.uW = n.uW/sum(n.uW))
+
+## All people (over 5)
+
+SUM.vhlss.2010.all.REG <- 
+  vhlss.2010 %>%
+  dplyr::group_by(tinh, m1ac2, big.age.group) %>%
+  dplyr::summarise(n=sum(wt9), n.uW=n())  %>%
+  dplyr::mutate(freq=n/sum(n), freq.uW = n.uW/sum(n.uW))
+
+Reg.vhlss.2010.summary <- full_join(SUM.vhlss.2010.all.REG, 
+                         SUM.vhlss.2010.agri.REG, 
+                         by=c("tinh"="tinh", "m1ac2"="m1ac2", "big.age.group"="big.age.group")) %>%
+  group_by(tinh) %>%
+  mutate(prop.farmers = n.y/sum(n.y))
+
+Reg.farmers <- Reg.vhlss.2010.summary %>%
+  select(tinh, m1ac2, big.age.group, prop.farmers) %>%
+  unite(sex.age, m1ac2,big.age.group) %>%
+  spread( prop.farmers, key=sex.age, drop=TRUE) %>%
+  arrange(.[[7]])
+
+write.csv( SUM.vhlss.2010.agri, file = "data/SUM.vhlss.2010.agri.csv")
+write.csv( SUM.vhlss.2010.all, file = "data/SUM.vhlss.2010.all.csv")
+write.csv(Reg.farmers, file = "data/Reg.farmers.csv", row.names = FALSE)
+write.csv( province.names, file = "data/province.names.csv")
+
+```
+
+
+```{r fig_vhlss_agri_occ, include = TRUE, echo = FALSE, results="hide", fig.width=8, figh.height=6, fig.cap="Figure 3: The age and gender distribution of everyone over 5 in agricultural occupations or self-employment. Red indicates the respecive population distributions everyone, irrespective of occupation. The chart represents 31,588,851 people in agriculture (sums to 100 %) compared to 78,305,295 people overall (also sum up to 100 %) – the structure of the latter looks like the weighting leads to overrepresentation of the 35– age groups, so clearly the VHLS saple is not representative even at this resolution..."}
+
+SUM.vhlss.2010.all <- read.csv("../data/SUM.vhlss.2010.all.csv")
+SUM.vhlss.2010.agri <- read.csv("../data/SUM.vhlss.2010.agri.csv")
+ 
+lower <- 5
+upper <- 95
+labz <- c(paste(seq(lower, upper - 10, by = 10),
+                seq(lower + 10 - 1, upper - 1, by = 10),
+                sep = "-"),
+          paste(upper, "+", sep = ""))
+oldpar <-  par(no.readonly=T)
+
+## 2.2. plot all agri pop vs all pop (over 15)
+
+par(mfrow=c(1,2))
+par(mar=c(2,0,0,2.5))
+barplot(rep(0,10), horiz = TRUE,
+        xlim=c(-0.12,0), axes = FALSE,
+        col="black", density=10)
+axis(1, at=seq(0, -0.3, -0.05), labels=seq(0, 30, 5))
+for (i in seq(0, -0.1, -0.05)){
+  lines(c(i,i), c(0,11.7), lty=2, col="gray")
+}
+
+barplot(-SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==1,]$freq, horiz = TRUE,
+  axes = FALSE, add=TRUE,
+        col="black", density=10)
+
+for (i in 1:11) {
+  lines(-rep(SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==1,]$freq[i],2), 
+        c(i-1+(0.2*i), i+(0.2*i)), 
+        col="red", lwd=2)
+  lines(c(0, -SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==1,]$freq[i]),
+        rep((i-1+(0.2*i)+ i+(0.2*i))/2,2), col="red")
+}
+
+
+par(mar=c(2,2.5,0,0))
+barplot(rep(0,10), horiz = TRUE,
+        xlim=c(0,0.12), names.arg = labz, las=2, axes=FALSE,
+        col="black", density=10)
+axis(1, at=seq(0, 0.3, 0.05), labels=seq(0, 30, 5))
+for (i in seq(0, 0.1, 0.05)){
+  lines(c(i,i), c(0,11.7), lty=2, col="gray")
+}
+barplot(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==2,]$freq, horiz = TRUE,
+ las=2, axes=FALSE, add=TRUE,
+        col="black", density=10)
+
+for (i in 1:11) {
+  lines(rep(SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==2,]$freq[i],2), 
+        c(i-1+(0.2*i), i+(0.2*i)), 
+        col="red", lwd=2)
+  lines(c(0, SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==2,]$freq[i]),
+        rep((i-1+(0.2*i)+ i+(0.2*i))/2,2), col="red")
+}
+```
+<br> 
+
+```{r fig_vhlss_agri_occrelative, include = TRUE, echo = FALSE, results="hide", fig.width=8, figh.height=6, fig.cap="Figure 4: Same as Figure 3, only this time the people in agriculture (approx 40 %) are shown relative to the total population (100 %))."}
+
+###plots
+
+lower <- 5
+upper <- 95
+labz <- c(paste(seq(lower, upper - 10, by = 10),
+                seq(lower + 10 - 1, upper - 1, by = 10),
+                sep = "-"),
+          paste(upper, "+", sep = ""))
+
+## 2.2. plot all agri pop vs all pop sam scale
+## 
+## ratio
+rat <- sum(SUM.vhlss.2010.agri$n)/sum(SUM.vhlss.2010.all$n)
+
+par(mfrow=c(1,2))
+par(mar=c(2,0,0,2.5))
+barplot(rep(0,10), horiz = TRUE,
+        xlim=c(-0.11,0), axes = FALSE,
+        col="black", density=10)
+axis(1, at=seq(0, -0.3, -0.05), labels=seq(0, 30, 5))
+for (i in seq(0, -0.1, -0.05)){
+  lines(c(i,i), c(0,11.7), lty=2, col="gray")
+}
+
+barplot(-SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==1,]$freq*rat, horiz = TRUE,
+        axes = FALSE, add=TRUE,
+        col="black", density=10)
+
+for (i in 1:11) {
+  lines(-rep(SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==1,]$freq[i],2), 
+        c(i-1+(0.2*i), i+(0.2*i)), 
+        col="red", lwd=2)
+  lines(c(0, -SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==1,]$freq[i]),
+        rep((i-1+(0.2*i)+ i+(0.2*i))/2,2), col="red")
+}
+
+
+par(mar=c(2,2.5,0,0))
+barplot(rep(0,10), horiz = TRUE,
+        xlim=c(0,0.11), names.arg = labz, las=2, axes=FALSE,
+        col="black", density=10)
+axis(1, at=seq(0, 0.3, 0.05), labels=seq(0, 30, 5))
+for (i in seq(0, 0.1, 0.05)){
+  lines(c(i,i), c(0,11.7), lty=2, col="gray")
+}
+barplot(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==2,]$freq*rat, horiz = TRUE,
+       las=2, axes=FALSE, add=TRUE,
+        col="black", density=10)
+
+for (i in 1:11) {
+  lines(rep(SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==2,]$freq[i],2), 
+        c(i-1+(0.2*i), i+(0.2*i)), 
+        col="red", lwd=2)
+  lines(c(0, SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==2,]$freq[i]),
+        rep((i-1+(0.2*i)+ i+(0.2*i))/2,2), col="red")
+}
+
+```
+
+Figure 3 actually shows a pattern not too dissimilar to Figure 1: relative to the age structure of the population, agricultural occupations are over-represented in age groups from 25-64, and quite proportional at ages 65-74. 
+    
+Seems like the survey including primary and secondary and self-employment in agrliculture - as opposed to only a single occupation as the census data did - does paint a dramatically different picture at older ages. 
+    
+Figure 4 is essentially  the same data as Figure 3, only the agricultural workers' pyramid is now scaled correctly relative to the whole population (red), so it is clear that around 40 \% of the population is involved in agriculture, a proportion which ranges from single digits for under 14s and women over 85, to highs of 60 \% for the age group 45--64 (see Table 8 for these numbers).  
+    
+```{r vhlss_table1, results = "asis", echo = FALSE} 
+xx <- rbind(
+  c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==1,]$freq*100, 0),
+  c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==2,]$freq*100, 0),
+  SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==1,]$freq*100,
+  SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==2,]$freq*100)
+colnames(xx) <- labz
+rownames(xx) <- rep(c("Males", "Females"), 2)
+kable( xx[3:4,], digits = 2, caption = "Table 5: Age structure of whole population (over 5) -- see Figure 3.")  
+```   
+
+<br>
+
+
+```{r vhlss_table2, results = "asis", echo = FALSE} 
+kable( xx[1:2,], digits = 2, caption = "Table 6: Age structure of farmers (over 5) -- see Figure 2.") 
+```
+<br>
+
+```{r vhlss_table3, results = "asis", echo = FALSE} 
+
+xx <- rbind(
+  c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==1,]$freq*100, 0),
+  c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==2,]$freq*100, 0),
+  c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==1,]$freq*100*rat, 0),
+  c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==2,]$freq*100*rat, 0),
+  SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==1,]$freq*100,
+  SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==2,]$freq*100,
+  c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==1,]$freq*rat,0)/SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==1,]$freq*100,
+  c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==2,]$freq*rat,0)/SUM.vhlss.2010.all[SUM.vhlss.2010.all$m1ac2==2,]$freq*100)
+colnames(xx) <- labz
+rownames(xx) <- rep(c("Males", "Females"), 4)
+kable( xx[3:4,], digits = 2, caption = "Table 7: farmers as proportion of whole population (over 5): total sums up to 40.34 % -- see Figure 4.") 
+
+# sum(c(SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==1,]$freq*100*rat,SUM.vhlss.2010.agri[SUM.vhlss.2010.agri$m1ac2==2,]$freq*100*rat))
+```
+
+<br>
+
+```{r vhlss_table4, results = "asis", echo = FALSE} 
+kable( xx[7:8,], digits = 2, caption = "Table 8: Farmers as proportion of each age-group population -- see Figure 4.") 
+```
+
+
+## Regional variation of proportion farmers{#Sec:VAll}
+
+ 
+The VHLLS is meant to be representative at the provincial level - however the sample sizes are so small, that the previous age-grouping are not useful. Instead I've grouped the data into three big age groups: 5--24, 25--54, and 55+, which is perhaps more reasonable to investigate the regional variation of people in agriculture relative to the rest. Still, these numbers are still extremely low, so I wouldn't put too much weight on them.. 
+    
+  
+   
+
+```{r fig_vhlss_provinces, include = TRUE, echo = FALSE, results="hide", fig.width=8, fig.height=11, fig.cap="Figure 5: Proportion of farmers in each age group by province. Gray segments are men, pink are women. Each bar represents one province."}
+
+Reg.farmers <- read.csv("../data/Reg.farmers.csv")
+province.names <- read.csv("../data/province.names.csv")
+
+## split into two and add province names
+
+left_join(data.frame(tinh = Reg.farmers$tinh), province.names, by = c("tinh" = "V1")) %>%
+  select(V2) %>%
+  unlist() %>%
+  as.character() -> names1
+sapply(names1, function(x) substr(x, 2, nchar(x)-9)) -> names1
+names1[34] <- "Ha Noi"
+names1[62] <- "Da Nang"
+names1[63] <- "Ho Chi Ming"
+names1[51] <- "Hai Phong"
+names1 <- names1[1:61]
+
+par(mfrow=c(1,1))
+par(mar=c(2.2,7.7,1.,.5), xpd=TRUE)  
+barplot(t(as.matrix(Reg.farmers[1:61,c(4,2,3,6,5,7)])), horiz = TRUE,
+        col= c("gray20", "gray50", "gray70", "pink", "pink2", "pink4"), space=0.5,
+        names.arg = names1, las=2, axes=FALSE, family = "Garamond")
+par(family = "Garamond")
+legend(0., 95,legend=c("over 55", "25-54", "under 25", "under 25", "25-54", "over 55"),
+       fill = c("gray20", "gray50", "gray70", "pink", "pink2", "pink4"),
+       horiz = TRUE,bty = "n", x.intersp=1 )
+axis(1, family = "Garamond")
+
+
+```
+
+    
+Figure 5 is just a quick overview of the data: Each bar represents all the farmers in one province and their gender and age structure. Lighter colours are younger and darker older, the provinces are sorted by proportion of farmers who are women over 55. The highest level is in Thái Bình province (code 34) where 20 \% of the people in agricultural occupations are women over 55 (and 22 \% are men over 55) -- but this is based on a sample of 282 farmers (the total sample for the province is 516). 
+
+The average proportion of farmers who are older women across all provinces is 8.2 \% and for men it is slightly less at 7.9  
+
