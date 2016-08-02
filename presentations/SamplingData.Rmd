@@ -1,0 +1,447 @@
+---
+title: "Vietnam Survey - Sampling Stratification Background Data"
+author: mz
+output: word_document
+---
+```{r setup, include = FALSE}
+library(LaF)
+library(dplyr)
+library(ENmisc)
+library(Hmisc)
+library(tidyr)
+library(tikzDevice)
+require(knitr)
+knitr::opts_chunk$set( fig.width=7, fig.height=7)
+```
+
+```{r fonts, message=FALSE, include = FALSE}
+library(extrafont)
+#loadfonts(device="postscript")
+
+```
+
+```{r dataimport, include = FALSE, eval = FALSE}
+############################
+## 1. Create link to file
+############################
+# set up for importing ipums, fixed widths, var.names and types.
+ipums.file <- "../../../../data/IPUMS/ipumsi_00003.dat"
+wdts <- c(3, 4, 4, 10, 3, 8,
+          2, 1, 2, 6, 1, 6,
+          1, 1, 2, 3, 8,
+          3, 3, 3, 2, 2, 1,
+          1, 3, 3, 2, 1, 1, 1, 2,
+          4, 2, 2, 2, 2, 4,
+          1, 2, 2, 2, 1, 1,
+          1, 1, 2, 2, 3, 1,
+          1, 2,  2, 4, 3, 3, 5,
+          2, 1, 1, 2, 2, 3,
+          1,  1, 1, 1, 1, 1)
+column.names <- c("cntry", "year", "sample", "serial", "persons", "wthh",
+                  "subsamp","urban", "regionw", "geolev1", "regnv","wtf",
+                  "mortnum", "anymort", "hhtype", "pernum", "wtper",
+                  "momloc", "poploc", "sploc", "parrule", "srule", "relate",
+                  "related", "wtf2", "age", "age2", "sex", "marst", "marstd", "wtf3",
+                  "brthyr", "brthmo", "chborn", "chsurv", "lstbmth", "lstbyr",
+                  "lstbsex", "chdead", "homechd", "awaychd", "school", "lit",
+                  "edattan", "edatand",  "wtf2","yrschl", "educvn", "empstat",
+                  "empstatd", "wtf4", "occisco", "occ", "isco88a", "indgen", "ind",
+                  "wtf5", "classwk", "classwkd", "empsect", "migrates", "migvn",
+                  "disable", "disemp", "disblind", "disdeaf", "dislowr","dismntl")
+column.classes <- c("categorical", "categorical", "categorical", "integer", "integer", "double",
+                    "integer", "categorical", "categorical","categorical", "categorical", "integer",
+                    "integer", "categorical", "categorical", "integer", "double",
+                    "categorical", "categorical", "categorical", "categorical","categorical","categorical",
+                    "categorical", "integer", "integer", "categorical", "categorical", "categorical", "categorical", "integer",
+                    "integer", "categorical", "integer", "integer", "categorical", "integer",
+                    "categorical", "integer", "integer", "integer", "categorical", "categorical",
+                    "categorical", "categorical", "integer", "integer", "categorical", "categorical",
+                    "categorical", "integer", "categorical", "categorical", "categorical", "categorical", "categorical",
+                    "integer", "categorical", "categorical", "categorical", "categorical", "categorical",
+                    "categorical", "categorical", "categorical", "categorical", "categorical", "categorical")
+# ## test it works
+read.fwf(ipums.file,width=wdts, col.names=column.names,skip=30, n = 10)
+# ## open link to file
+d <- laf_open_fwf(ipums.file, column_widths=wdts,
+                   column_types=column.classes, column_names = column.names)
+
+rm(column.classes, column.names, ipums.file, wdts)
+
+## 1.1 al pop in agricultural occupations 
+all.agri.pop <- d[,c("year","relate","sex", "age", "occ", "geolev1", "wtper")] %>%    
+  dplyr::filter(year==2009) %>%  
+  dplyr::filter(occ %in% c("0920", "0600", "0610", "0611", "0612", "0613", 
+                           "0630","0631", "0632", "0633")) %>%
+  droplevels(.)%>%
+  mutate(age.group = cut(age, breaks=c(seq(15,95,10)), right=FALSE, include.lowest=TRUE))
+
+SUM.all.agri.pop <- all.agri.pop %>%
+  dplyr::group_by(sex, age.group) %>%
+  dplyr::summarise(n=sum(wtper)/100) %>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(freq=n/sum(n))
+
+## 1.1 al pop
+
+all.pop <- d[,c("year","relate","sex", "age", "occ", "geolev1", "wtper")] %>%    
+  dplyr::filter(year==2009, age >=15) %>%  
+  droplevels(.)%>%
+  mutate(age.group = cut(age, breaks=c(seq(15,95,10)), right=FALSE, include.lowest=TRUE))
+
+SUM.all.pop <- all.pop %>%
+  dplyr::group_by(sex, age.group) %>%
+  dplyr::summarise(n=sum(wtper)/100) %>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(freq=n/sum(n))
+
+## ratio
+sum(SUM.all.pop$n)
+sum(SUM.all.agri.pop$n)
+
+
+## 1.2 agri heads
+
+all.agri.heads <- d[,c("year","relate","sex", "age", "occ", "geolev1", "wtper")] %>%    
+  dplyr::filter(year==2009) %>%  
+  dplyr::filter(relate==1) %>%  
+  dplyr::filter(occ %in% c("0920", "0600", "0610", "0611", "0612", "0613", 
+                           "0630","0631", "0632", "0633"))  %>%
+  droplevels(.) %>%
+  mutate(age.group = cut(age, breaks=c(seq(15,95,10)), right=FALSE, include.lowest=TRUE))
+
+SUM.all.agri.heads <- all.agri.heads %>%
+  dplyr::group_by(sex, age.group) %>%
+  dplyr::summarise(n=sum(wtper)/100) %>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(freq=n/sum(n))
+
+## all heads
+
+all.heads <- d[,c("year","relate","sex", "age", "occ", "geolev1", "wtper")] %>%    
+  dplyr::filter(year==2009, relate==1, age>=15) %>%  
+  droplevels(.)%>%
+  mutate(age.group = cut(age, breaks=c(seq(15,95,10)), right=FALSE, include.lowest=TRUE))
+
+SUM.all.heads <- all.heads %>%
+  dplyr::group_by(sex, age.group) %>%
+  dplyr::summarise(n=sum(wtper)/100) %>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(freq=n/sum(n))
+
+write.csv( SUM.all.agri.pop, file = "data/Sum.all.agri.pop.csv")
+write.csv( SUM.all.pop, file = "data/Sum.all.pop.csv")
+write.csv( SUM.all.agri.heads, file = "data/Sum.all.agri.heads.csv")
+write.csv( SUM.all.heads, file = "data/Sum.all.heads.csv")
+
+```
+# 1. Vientam 2009 Census - IPUMS
+
+Based on the IPUMS-International micro-data from the 2009 census. This is a 15 % sample from the complete 2009 census data --- 3,692,042 households or 14,775,590 individuals. 
+
+The distribution is calculated using the person weights (variable `WTPER`) of people in agricultural occupations (see [Section 1.1](#Sec:agr) ), which is compared to the distribution of the over 15 population as a whole. 
+
+
+The age and gender distribution is calculated separately for
+1. all persons over the age of 15 -- Fig \ref{Fig:01}
+2. all heads of households -- Fig \ref{Fig:02}
+
+No regional decomposition was attempted due to occupational status presumably not being very useful for the older ages (see bellow). 
+
+## 1.1 Agricultural occupational status {#Sec:agr}
+
+Occupational status is determined from the answer to the following question:
+ [^1] 
+    
+> *During the last 7 days, what was the main type of work you did and what position did you hold for the mentioned work (if available)?*
+
+    
+The big caveat here is therefore that these occupational categories only refer to the main occupation as described in the question above and very likely exclude large numbers of people who are engaged in rice farming, but not as their main occupation, or did not engage in it in the previous 7 days and/or (presumably) are retired!
+
+[^1]:codes available at <https://international.ipums.org/international-action/variables/VN2009A_0416#codes_section>
+
+
+Agricultural occupational status was selected for from by the `OCC` variable by including the following codes:
+
+* 920	Agricultural, forestry, fishery labourers	3,274,060
+* 600	Skilled agricultural, forestry and fishery workers	3
+* 610	Commercial skilled agricultural workers, unspecified	34
+* 611	Commercial gardeners and crop growers	767,287
+* 612	Commercial animal producers	155,144
+* 613	Commercial crop and animal producers	2,687
+* 630	Subsistence agricultural, fishery, hunting and gathering workers, unspecified	35
+* 631	Subsistence agricultural workers	480,768
+* 632	Subsistence animal producers	22,272
+* 633	Subsistence crop and animal producers	897
+    
+
+## All persons over 15 --- in agricultural occupations{#Sec:All}
+
+```{r fig_agric_occupation, include = TRUE, echo = FALSE, results="hide", fig.width=8, figh.height=6, fig.cap="Figure 1: The age and gender distribution all persons over 15 in agricultural occupations. Red indicates the respecive population distributions for all persons over 15, irrespective of occupation. The chart represents 24,949,636 people in agriculture compared to 64,332,914 people over 15."}
+SUM.all.agri.pop <- read.csv("../data/Sum.all.agri.pop.csv")
+SUM.all.pop <- read.csv("../data/Sum.all.pop.csv")
+
+lower <- 15
+upper <- 85
+labz <- c(paste(seq(lower, upper - 10, by = 10),
+                seq(lower + 10 - 1, upper - 1, by = 10),
+                sep = "-"),
+          paste(upper, "+", sep = ""))
+oldpar <-  par(no.readonly=T)
+
+par(mfrow=c(1,2))
+par(mar=c(2,1,0,2.5))
+barplot(-SUM.all.agri.pop[SUM.all.agri.pop$sex==1,]$freq, horiz = TRUE, 
+        xlim=c(-0.135,0), axes = FALSE, 
+        col="black", density=10)
+axis(1, at=seq(0, -0.3, -0.05), labels=seq(0, 30, 5), family = "Garamond", cex.axis = 1.3)
+for (i in seq(0, -0.3, -0.05)){
+  lines(c(i,i), c(0,9.7), lty=2, col="gray")
+}
+barplot(-SUM.all.agri.pop[SUM.all.agri.pop$sex==1,]$freq, horiz = TRUE,
+        xlim=c(-0.135,0), axes = FALSE, add=TRUE,
+        col="black", density=10)
+
+for (i in 1:8) {
+  lines(-rep(SUM.all.pop[SUM.all.pop$sex==1,]$freq[i],2), 
+        c(i-1+(0.2*i), i+(0.2*i)), 
+        col="red", lwd=2)
+  lines(c(0, -SUM.all.pop[SUM.all.pop$sex==1,]$freq[i]),
+        rep((i-1+(0.2*i)+ i+(0.2*i))/2,2), col="red")
+}
+
+
+par(mar=c(2,2.5,0,1))
+barplot(SUM.all.agri.pop[SUM.all.agri.pop$sex==2,]$freq, horiz = TRUE,
+        xlim=c(0,0.135), names.arg = labz, las=2, axes=FALSE,
+        col="black", density=10,  family = "Garamond", cex.names  = 1.3)
+axis(1, at=seq(0, 0.3, 0.05), labels=seq(0, 30, 5), family = "Garamond", cex.axis = 1.3)
+for (i in seq(0, 0.3, 0.05)){
+  lines(c(i,i), c(0,9.7), lty=2, col="gray")
+}
+barplot(SUM.all.agri.pop[SUM.all.agri.pop$sex==2,]$freq, horiz = TRUE,
+        xlim=c(0,0.135), names.arg = labz, las=2, axes=FALSE, add=TRUE,
+        col="black", density=10, family = "Garamond", cex.names  = 1.3)
+
+for (i in 1:8) {
+  lines(rep(SUM.all.pop[SUM.all.pop$sex==2,]$freq[i],2), 
+        c(i-1+(0.2*i), i+(0.2*i)), 
+        col="red", lwd=2)
+  lines(c(0, SUM.all.pop[SUM.all.pop$sex==2,]$freq[i]),
+        rep((i-1+(0.2*i)+ i+(0.2*i))/2,2), col="red")
+}
+
+```
+
+
+## All heads of household --- in agricultural occupations{#Sec:HH} 
+    
+```{r fig_agri_heads, include = TRUE, echo = FALSE, results="hide", fig.width=8, figh.height=6, fig.cap="Figure 2: The age and gender distribution all *heads of households* in agricultural occupations. Red indicates the respecive population distributions for heads of households, irrespective of occupation. The chart represents 9,434,305 heads of households in agriculture compared to 23,062,456 heads of households over 15."}
+SUM.all.agri.heads <- read.csv("../data/Sum.all.agri.heads.csv")
+SUM.all.heads <- read.csv("../data/Sum.all.heads.csv")
+par(mfrow=c(1,2))
+par(mar=c(2,1,0,2.5))
+barplot(-SUM.all.agri.heads[SUM.all.agri.heads$sex==1,]$freq, horiz = TRUE, 
+        xlim=c(-0.25,0), axes = FALSE,
+        col="black", density=10)
+axis(1, at=seq(0, -0.3, -0.05), labels=seq(0, 30, 5), family = "Garamond", cex.axis = 1.3)
+for (i in seq(0, -0.3, -0.05)){
+  lines(c(i,i), c(0,9.7), lty=2, col="gray")
+}
+barplot(-SUM.all.agri.heads[SUM.all.agri.heads$sex==1,]$freq, horiz = TRUE,
+        xlim=c(-0.25,0), axes = FALSE, add=TRUE,
+        col="black", density=10)
+
+for (i in 1:8) {
+  lines(-rep(SUM.all.heads[SUM.all.heads$sex==1,]$freq[i],2), 
+        c(i-1+(0.2*i), i+(0.2*i)), 
+        col="red", lwd=2)
+  lines(c(0, -SUM.all.heads[SUM.all.heads$sex==1,]$freq[i]),
+        rep((i-1+(0.2*i)+ i+(0.2*i))/2,2), col="red")
+}
+
+
+par(mar=c(2,2.5,0,1))
+barplot(SUM.all.agri.heads[SUM.all.agri.heads$sex==2,]$freq, horiz = TRUE,
+        xlim=c(0,0.25), names.arg = labz, las=2, axes=FALSE, family = "Garamond", cex.names = 1.3,
+        col="black", density=10)
+axis(1, at=seq(0, 0.3, 0.05), labels=seq(0, 30, 5), family = "Garamond", cex.axis = 1.3)
+for (i in seq(0, 0.3, 0.05)){
+  lines(c(i,i), c(0,9.7), lty=2, col="gray")
+}
+barplot(SUM.all.agri.heads[SUM.all.agri.heads$sex==2,]$freq, horiz = TRUE,
+        xlim=c(0,0.25), names.arg = labz, las=2, axes=FALSE, add=TRUE,
+         family = "Garamond", cex.names = 1.3,
+        col="black", density=10)
+
+for (i in 1:8) {
+  lines(rep(SUM.all.heads[SUM.all.heads$sex==2,]$freq[i],2), 
+        c(i-1+(0.2*i), i+(0.2*i)), 
+        col="red", lwd=2)
+  lines(c(0, SUM.all.heads[SUM.all.heads$sex==2,]$freq[i]),
+        rep((i-1+(0.2*i)+ i+(0.2*i))/2,2), col="red")
+}
+
+```
+    
+<br>
+    
+```{r ipums_table1, results = "asis", echo = FALSE} 
+xx <- rbind(
+  SUM.all.agri.pop[SUM.all.agri.pop$sex==1,]$freq*100,
+  SUM.all.agri.pop[SUM.all.agri.pop$sex==2,]$freq*100,
+  SUM.all.pop[SUM.all.pop$sex==1,]$freq*100,
+  SUM.all.pop[SUM.all.pop$sex==2,]$freq*100)
+colnames(xx) <- labz
+rownames(xx) <- rep(c("Males", "Females"), 2)
+kable( xx[3:4,], digits = 2, caption = "Table 1: Age structure of whole population (over 15) -- see Figure 1.")  
+```
+
+<br>
+
+
+
+```{r ipums_table2, results = "asis", echo = FALSE} 
+kable( xx[1:2,], digits = 2, caption = "Table 2: Age structure of farmers (over 15) -- see Figure 1.") 
+```
+
+<br>
+
+```{r ipums_table3, results = "asis", echo = FALSE} 
+xx <- rbind(
+    SUM.all.agri.heads[SUM.all.agri.heads$sex==1,]$freq*100,
+      SUM.all.agri.heads[SUM.all.agri.heads$sex==2,]$freq*100,
+    SUM.all.heads[SUM.all.heads$sex==1,]$freq*100,
+    SUM.all.heads[SUM.all.heads$sex==2,]$freq*100)
+colnames(xx) <- labz
+rownames(xx) <- rep(c("Males", "Females"), 2)
+kable( xx[3:4,], digits = 2, caption = "Table 3: Age structure of heads of hosueholds (over 15) -- see Figure 2.") 
+
+```
+
+<br>
+
+
+```{r ipums_table4, results = "asis", echo = FALSE} 
+kable( xx[1:2,], digits = 2, caption = "Table 4: Age structure of farmers heads of hosueholds (over 15) -- see Figure 2.") 
+```
+
+<!--    
+  
+    
+    \section{Vietnam Household Living Standards Survey - 2010}
+    
+    The Vietnam Household Living Standards Survey is a biannual longitudinal survey
+    conducted by the Vietnamese Government Statistical Office, and is meant to be nationally representative (but this has been disputed\footnote{e.g. \url{http://www.ou.edu.vn/ncktxh/Documents/Seminars/VHLSS\%20Impacts.pdf}}). The 2010 sample has 36,988 persons in 9.395 households\footnote{NB: because of missing and duplicated weights 6 hh = 24 people have had to be dropped...}. Only household weights are available for the sample, and have been used here. 
+    
+    
+    \subsection{Employment or Self-employment in agriculture, forestry, aquaculture}\label{Sec:Vagr}
+    
+    The population distribution is selected from people either in primary or secondary employment or self-employed in agriculture related activities. 
+    
+    \subsubsection{Employment}
+    
+    \emph{Employment} in agriculture, forestry, aquaculture is determined by the occupational code noted in conjunction with answers to the following two questions asked of every household member over the age of five::
+    
+    \begin{quote}
+    \emph{\texttt{4A1.3c} Which job has been the most time-consuming over the last 12 months?}
+    
+    \emph{\texttt{4A1.4c} What is the second most time-consuming job (after the main one) taken by [name] over the past 12 months?}
+    \end{quote}
+    
+    \noindent Agricultural occupational status was selected by including the following codes:
+    
+    \begin{itemize}
+    \item 61	Labourers with market-demanded skills in agriculture
+    \item 62	Labourers with market-demanded skills in forestry, fisheries and hunting
+    \item 63	Labourers in agriculture, fisheries, hunting and collection of farm produce for self-subsidy
+    \item 92	Low-skilled labourers in agriculture, forestry and fisheries
+    
+    \end{itemize}
+    
+    \subsubsection{Self-employment}
+    
+    \emph{\emph{Self-employment} in agriculture, forestry, aquaculture }is determined from the answer to the following question asked of every household member over the age of five:
+    
+    \begin{quote}
+    \emph{\texttt{4A1.1b} Over the past 12 months, have you been involved in production or services regarding production, husbandry, forestry and aquaculture for the household?}
+    \end{quote}
+    
+    \subsection{All persons over 5 --- in agricultural occupations}\label{Sec:VAll}
+    
+    
+    \begin{figure}[htbp!]
+    
+    \includegraphics[width=\textwidth]{figures/VHLSSAgriDistAll.eps}
+    \caption{The age and gender distribution of everyone over 5 in agricultural occupations or self-employment. \textcolor{red}{Red} indicates the respecive population distributions everyone, irrespective of occupation. The chart represents 31,588,851 people in agriculture (sums to 100 \%) compared to 78,305,295 people overall (also sum up to 100 \%) -- the structure of the latter looks like the weighting leads to overrepresentation of the 35-- age groups, so clearly the VHLS saple is not representative even at this resolution...}\label{Fig:03}
+    \end{figure}
+    
+    Figure \ref{Fig:03} actually shows a pattern not too dissimilar to Figure \ref{Fig:01}: relative to the age structure of the population, agricultural occupations are over-represented in age groups from 25-64, and quite proportional at ages 65-74. 
+    
+    Seems like the survey including primary and secondary and self-employment in agrliculture - as opposed to only a single occupation as the census data did - does paint a dramatically different picture at older ages. 
+    
+    \begin{figure}[htbp!]
+    
+    \includegraphics[width=\textwidth]{figures/VHLSSAgriDistAllRelative.eps}
+    \caption{Same as Figure \ref{Fig:03}, only this time the people in agriculture (approx 40 \%) are shown  relative to the total population (100 \%)).}\label{Fig:04}
+    \end{figure}
+    
+    
+    \begin{table}[htbp!]
+    \caption{Data for Figures \ref{Fig:03} and \ref{Fig:04} - own calculations from VHLSS 2010}\label{Tab:01}
+    \centering
+    \begin{tabular}{rr rrrrrrrrr}
+    \\
+    \multicolumn{11}{c}{\emph{2.1 Age structure of whole population ($\Sigma = 100 \%$)}}\\
+    \hline
+    & 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
+    \hline
+    \emph{M} & 8.12 & 10.46 & 8.18 & 7.85 & 6.90 & 3.97 & 1.77 & 1.06 & 0.26 & 0.01 \\ 
+    \emph{W} & 7.62 & 10.29 & 8.52 & 8.05 & 7.78 & 4.36 & 2.50 & 1.68 & 0.59 & 0.04 \\ 
+    \\
+    \multicolumn{11}{c}{\emph{2.2 Age structure of farmers ($\Sigma = 100 \%$)}}\\
+    \hline
+    & 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
+    \hline
+    \emph{M} & 1.62 & 9.09 & 9.57 & 11.03 & 9.81 & 5.36 & 2.04 & 0.63 & 0.07 & 0.00 \\ 
+    \emph{W} & 1.25 & 7.63 & 10.37 & 11.32 & 11.64 & 5.66 & 2.22 & 0.63 & 0.06 & 0.00 \\ 
+    \hline
+    \\
+    \multicolumn{11}{c}{\emph{2.3 Farmers as proportion of whole population ($\Sigma = 40.34 \%$)}}\\
+    \hline
+    & 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
+    \hline
+    \emph{M} & 0.65 & 3.67 & 3.86 & 4.45 & 3.96 & 2.16 & 0.82 & 0.26 & 0.03 & 0.00 \\ 
+    \emph{W}& 0.51 & 3.08 & 4.18 & 4.57 & 4.70 & 2.28 & 0.90 & 0.25 & 0.02 & 0.00 \\ 
+    \hline
+    \\
+    \multicolumn{11}{c}{\emph{2.4 Farmers as proportion of each age-group population}}\\
+    \hline
+    & 5-14 & 15-24 & 25-34 & 35-44 & 45-54 & 55-64 & 65-74 & 75-84 & 85-94 & 95+ \\ 
+    \hline
+    \emph{M} & 8.05 & 35.05 & 47.20 & 56.68 & 57.38 & 54.46 & 46.57 & 24.04 & 10.28 & 0.00 \\ 
+    \emph{W} & 6.64 & 29.91 & 49.13 & 56.77 & 60.35 & 52.39 & 35.74 & 15.21 & 4.15 & 0.00 \\ 
+    \hline
+    \end{tabular}
+    \end{table}
+    
+    Figure \ref{Fig:04} is essentially  the same data as Figure \ref{Fig:03}, only the agricultural workers' pyramid is now scaled correctly relative to the whole population (red), so it is clear that around 40 \% of the population is involved in agriculture, a proportion which ranges from single digits for under 14s and women over 85, to highs of 60 \% for the age group 45--64 (see Table 3.4 for these numbers).  
+    
+    \subsection{Regional variation of proportion farmers}\label{Sec:VAll}
+    
+    The VHLLS is meant to be representative at the provincial level - however the sample sizes are so small, that the previous age-grouping are not useful. Instead I've grouped the data into three big age groups: 5--24, 25--54, and 55+, which is perhaps more reasonable to investigate the regional variation of people in agriculture relative to the rest. Still, these numbers are still extremely low, so I wouldn't put too much weight on them.. 
+    
+    Figure \label{Fig:05} is just a quick overview of the data: Each bar represents all the farmers in one province and their gender and age structure. Lighter colours are younger and darker older, the provinces are sorted by proportion of farmers who are women over 55. The highest level is in Thái Bình province (code 34) where 20 \% of the people in agricultural occupations are women over 55 (and 22 \% are men over 55) -- but this is based on a sample of 282 farmers (the total sample for the province is 516). 
+
+The average proportion of farmers who are older women across all provinces is 8.2 \% and for men it is slightly less at 7.9
+
+
+\begin{figure}[htbp!]
+\psfrag{a}[r][Br]{\scriptsize{over 55}}
+\psfrag{b}[r][Br]{\scriptsize{25-54}}
+\psfrag{c}[r][Br]{\scriptsize{under 25}}
+
+\includegraphics[width=\textwidth]{figures/VHLSSRegions.eps}
+\caption{Proportion of farmers in each age group by province. Gray segments are men, pink are women. Each bar represents one province (sorry the codes aren't there). }\label{Fig:05}
+                                                                                                                                       \end{figure}
+                                                                                                                                       \end{document}
+                                                                                                                                       regular html comment --> 
